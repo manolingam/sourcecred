@@ -132,7 +132,7 @@ function computeFastReceipts(
     throw new Error(`invalid harvestAmount: ${String(harvestAmount)}`);
   }
 
-  const totalCred = sum(Array.from(cred.values()));
+  const totalCred = sum(cred.values());
   if (totalCred === 0) {
     return [];
   }
