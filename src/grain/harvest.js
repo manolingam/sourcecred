@@ -26,7 +26,7 @@
 import {sum} from "d3-array";
 import {mapToArray} from "../util/map";
 import {type NodeAddressT} from "../core/graph";
-import {type Grain, multiplyFloat, ZERO} from "./grain";
+import {type Grain, multiplyFloat, toFloatRatio, ZERO} from "./grain";
 
 export const HARVEST_VERSION_1 = 1;
 
@@ -198,7 +198,7 @@ function computeFairReceipts(
   );
 
   let totalUnderpayment = ZERO;
-  const userUnderpayment: Map<NodeAddressT, Grain> = new Map();
+  const userUnderpayments: Map<NodeAddressT, Grain> = new Map();
   const addresses = new Set([...credMap.keys(), ...earnings.keys()]);
 
   for (const addr of addresses) {
@@ -208,14 +208,16 @@ function computeFairReceipts(
     const target = multiplyFloat(targetGrainPerCred, cred);
     if (target > earned) {
       const underpayment = target - earned;
-      userUnderpayment.set(addr, underpayment);
+      userUnderpayments.set(addr, underpayment);
       totalUnderpayment += underpayment;
     }
   }
 
-  return mapToArray(userUnderpayment, ([address, underpayment]) => {
-    const underpaymentProportion =
-      Number(underpayment) / Number(totalUnderpayment);
+  return mapToArray(userUnderpayments, ([address, underpayment]) => {
+    const underpaymentProportion = toFloatRatio(
+      underpayment,
+      totalUnderpayment
+    );
     return {
       address,
       amount: multiplyFloat(harvestAmount, underpaymentProportion),
