@@ -120,6 +120,15 @@ describe("src/grain/harvest", () => {
       };
     };
 
+    it("throws an error if given an unsupported strategy", () => {
+      const unsupportedStrategy = {
+        ...strategy,
+        version: 2,
+      };
+      expect(() =>
+        harvest(unsupportedStrategy, credHistory, new Map(), timestampMs)
+      ).toThrowError(`Unsupported FAST strategy: 2`);
+    });
     it("handles an interval in the middle", () => {
       const result = harvest(strategy, credHistory, new Map(), 20);
       // $ExpectFlowError
@@ -210,6 +219,16 @@ describe("src/grain/harvest", () => {
 
         expectHarvestsEqual(actual, emptyHarvest);
       });
+    });
+
+    it("throws an error if given an unsupported strategy", () => {
+      const unsupportedStrategy = {
+        ...strategy,
+        version: 2,
+      };
+      expect(() =>
+        harvest(unsupportedStrategy, credHistory, new Map(), timestampMs)
+      ).toThrowError(`Unsupported FAIR strategy: 2`);
     });
 
     it("should only pay Foo if Foo is sufficiently underpaid", () => {
