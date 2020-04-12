@@ -176,6 +176,10 @@ function computeFairReceipts(
   credMap: Map<NodeAddressT, number>,
   earnings: Map<NodeAddressT, Grain>
 ): $ReadOnlyArray<GrainReceipt> {
+  if (harvestAmount < ZERO) {
+    throw new Error(`invalid harvestAmount: ${String(harvestAmount)}`);
+  }
+
   let totalEarnings = ZERO;
   for (const e of earnings.values()) {
     totalEarnings += e;
